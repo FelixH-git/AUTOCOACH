@@ -11,4 +11,4 @@ update the 415x415 model, or just switch it out for GAN, to include all characte
 clone yolov5
 ```git clone https://github.com/ultralytics/yolov5```
 install requirements
-```pip install requirments.txt```
+```pip install -r requirments.txt```
