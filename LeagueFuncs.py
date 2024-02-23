@@ -32,7 +32,7 @@ def move_ping(x,y):
 
 def get_icons(icon_size, champions):
     icons = []
-    folder = os.listdir(r"C:\Users\metal\Desktop\VALO\icons")
+    folder = os.listdir(r"PATH_TO_ICONS")
     for i in champions:
         if i in folder:    
             champion = i[:i.find('.')]
@@ -40,7 +40,7 @@ def get_icons(icon_size, champions):
             if extension != '.png':
                 continue
 
-        p = os.path.join(r"C:\Users\metal\Desktop\VALO\icons", i)
+        p = os.path.join(r"PATH_TO_ICONS", i)
         if not os.path.isfile(p):
             continue
         img = cv2.imread(p)
