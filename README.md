@@ -1,5 +1,5 @@
 # AUTOCOACH
-auto coaching for league. Currently just a yolov5 model to analyze Enemy_minimap, and Ally_minimap
+auto coaching for league. Currently just a yolov5 model to analyze Enemy_minimap, and Ally_minimap, currently pings enemy jungle on the minimap (if spotted)
 
 # TODO
 Maybe fix cv2.matchTemplate by using round icons
