@@ -14,7 +14,7 @@ left, top = (1920 - 416), (1080 - 416)
 right, bottom = left + 416, top + 416
 region = (left, top, right, bottom)
 
-model = torch.hub.load(r"C:\Users\metal\Desktop\VALO\yolov5", "custom", path=r"C:\Users\metal\Desktop\VALO\2023-11-28model5k.pt", source="local")
+model = torch.hub.load(r"PATH_TO_YOLO_V5", "custom", path=r"PATH_TO_415x415", source="local")
 print(region)
 model.apm = True
 model.conf = 0.6
