@@ -8,6 +8,9 @@ update the 415x415 model, or just switch it out for GAN, to include all characte
 
 ![plot](https://github.com/SHOOPIDOOP/AUTOCOACH/blob/main/RUNNING.png)
 # USAGE
+clone repo
+```git@github.com:FelixH-git/AUTOCOACH.git```
+
 clone yolov5
 ```git clone https://github.com/ultralytics/yolov5```
 install requirements
