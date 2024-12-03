@@ -1,6 +1,6 @@
 import cv2
 import os
-from openai import OpenAI
+#from openai import OpenAI
 import tkinter as tk
 import pydirectinput as pyautogui
 import time
@@ -32,7 +32,7 @@ def move_ping(x,y):
 
 def get_icons(icon_size, champions):
     icons = []
-    folder = os.listdir(r"PATH_TO_ICONS")
+    folder = os.listdir(r"champion")
     for i in champions:
         if i in folder:    
             champion = i[:i.find('.')]
@@ -40,7 +40,7 @@ def get_icons(icon_size, champions):
             if extension != '.png':
                 continue
 
-        p = os.path.join(r"PATH_TO_ICONS", i)
+        p = os.path.join(r"champion", i)
         if not os.path.isfile(p):
             continue
         img = cv2.imread(p)

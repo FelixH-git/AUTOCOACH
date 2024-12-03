@@ -4,17 +4,18 @@ import cv2
 import numpy as np
 import time
 import os
-from openai import OpenAI
+#from openai import OpenAI
 import random
 from LeagueFuncs import *
 from ctypes import windll
 import pydirectinput as PDI
+import traceback
 
-left, top = (1920 - 416), (1080 - 416)
-right, bottom = left + 416, top + 416
+left, top = (1920 - 415), (1080 - 415)
+right, bottom = left + 415, top + 415
 region = (left, top, right, bottom)
 
-model = torch.hub.load(r"PATH_TO_YOLO_V5", "custom", path=r"PATH_TO_415x415", source="local")
+model = torch.hub.load("yolov5", "custom", path="415x415.pt", source="local")
 print(region)
 model.apm = True
 model.conf = 0.6
@@ -64,21 +65,24 @@ all_polygon.append(blueside_mid)
 start_time = time.time()
 x = 1
 counter = 0
-champs = ["veigar.png", "tryndamere.png", "sett.png", "shaco.png", "ornn.png", "ahri.png", "thresh.png", "nunu.png", "jhin.png", "missfortune.png"]
-enemy_team = ["ornn", "ahri", "sett", "nunu", "jhin"]
-jungle = "nunu"
-player = "veigar"
-ally_team = ["tryndamere", "thresh", "shaco", "missfortune"]
+champs = ["Veigar.png", "Vi.png", "Smolder.png"]
+enemy_team = ["Vi", "Smolder"]
+jungle = "Vi"
+player = "Veigar"
+ally_team = ["Veigar"]
 PDI.PAUSE=0
 icons = get_icons((35,35), champs)
 gpt_send = []
 new_start_time = time.time()
 while True:  
     try:
+        
         draw_rectangle_cords = []
         screenshot = camera.grab(region) 
         if screenshot is None: continue
-        df = model(screenshot, size=416).pandas().xyxy[0]
+        
+        df = model(screenshot, size=415).pandas().xyxy[0]
+        
         counter += 1
         if(time.time() - start_time) > x:
                 fps = "fps: " + str(int(counter/(time.time() - start_time)))
@@ -86,23 +90,32 @@ while True:
                 counter = 0
                 start_time = time.time()
         for i in range(0, 10):
-            xmin = int(df.iloc[i,0])
-            ymin = int(df.iloc[i,1]) 
-            xmax = int(df.iloc[i,2])
-            ymax = int(df.iloc[i,3])
+            try:
+                xmin = int(df.iloc[i,0])
+                ymin = int(df.iloc[i,1]) 
+                xmax = int(df.iloc[i,2])
+                ymax = int(df.iloc[i,3])
+            except:
+                print("", end="")
+            screenshot = np.array(screenshot)
             draw_rectangle_cords.append((xmin,ymin,xmax,ymax))
             img = cv2.cvtColor(screenshot[ymin:ymax,xmin:xmax], cv2.COLOR_BGR2BGRA)
             center = ((xmin+xmax)/2, (ymin+ymax)/2)
             threshold = 0.4
             for champ, icon in icons:
+                #print(icon.shape, "-", img.shape)
                 res = cv2.matchTemplate(img, icon, cv2.TM_CCOEFF_NORMED)
                 min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+                
+                
+                cv2.rectangle(screenshot, (xmin,ymin), (xmax, ymax), (255, 255,255))
+                #cv2.putText(screenshot, "player " + champ, (xmax, ymax + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
                 if champ in ally_team:
                     if max_val > threshold:
                         for i in all_polygon:
                             if point_test(i, center, champ, "ally", new_start_time) is not None and not point_test(i, center, champ, "ally", new_start_time) in gpt_send:
                                 pass
-                        rect = cv2.rectangle(screenshot,(xmin,ymin), (xmax, ymax), (255, 255,255), 1)
+                        cv2.rectangle(screenshot,(xmin,ymin), (xmax, ymax), (255, 255,255), 1)
                         cv2.putText(screenshot, "ally " + champ, (xmax, ymax + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
                 if champ in enemy_team:
                     if max_val > threshold:
@@ -119,8 +132,8 @@ while True:
                                     # PDI.keyDown("enter")
                                     # PDI.keyUp("enter")
                                     ##################################################
-                                    time.sleep(10)
-                        rect = cv2.rectangle(screenshot,(xmin,ymin), (xmax, ymax), (255, 255,255), 1)
+                                    time.sleep(2)
+                        cv2.rectangle(screenshot,(xmin,ymin), (xmax, ymax), (255, 255,255), 1)
                         cv2.putText(screenshot, "enemy " + champ, (xmax, ymax + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
                 if champ == player:
                     if max_val > threshold:
@@ -128,10 +141,10 @@ while True:
                             if point_test(i, center, champ, "player", new_start_time) is not None and not point_test(i, center, champ, "player", new_start_time) in gpt_send:
                                 if champ == jungle:
                                     pass
-                        rect = cv2.rectangle(screenshot,(xmin,ymin), (xmax, ymax), (255, 255,255), 1)
-                        cv2.putText(screenshot, "player " + champ, (xmax, ymax + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1, cv2.LINE_AA)
-    except:
-        print("", end="")
+                        #print("What?")
+
+    except Exception:
+        traceback.print_exc()
     
     
     cv2.imshow("frame", screenshot)
